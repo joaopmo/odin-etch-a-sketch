@@ -175,11 +175,16 @@ function eraserButton() {
 
 function clearButton() {
     const clear = document.getElementById('clear');
+    const eraser = document.getElementById('eraser');
+    const picker = document.getElementById('picker');
     const container = document.getElementById('grid-container');
 
     clear.addEventListener('click',
     function(e) {
         e.target.classList.toggle('button-focus');
+        eraser.classList.remove('button-focus');
+        picker.classList.remove('button-focus');
+        
         setTimeout(function(){
             container.textContent = ''
             makeGrid(dynamicValues.getGrid());
