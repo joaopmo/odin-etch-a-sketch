@@ -184,7 +184,9 @@ function clearButton() {
         e.target.classList.toggle('button-focus');
         eraser.classList.remove('button-focus');
         picker.classList.remove('button-focus');
-        
+        dynamicValues.setEraser(false);
+        dynamicValues.setPicker(false);
+
         setTimeout(function(){
             container.textContent = ''
             makeGrid(dynamicValues.getGrid());
