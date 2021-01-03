@@ -1,4 +1,3 @@
-
 /*RESET*/
 *,
 *::before,
@@ -7,16 +6,20 @@
     margin: 0;
 }
 
-body {
-    overscroll-behavior: none;
-    overflow: hidden;
+html {
+    width: 100%;
+    height: 100%;
+    height: -webkit-fill-available;
 }
 
-body,
-h1,
-h2, 
-p {
-    margin: 0;
+body {
+    overscroll-behavior: none;
+    -webkit-overflow-scrolling: touch;
+    overflow-x: auto;
+    overflow-y: scroll;
+
+    min-height: 100vh;
+    min-height: -webkit-fill-available;
 }
 
 button,
@@ -24,24 +27,24 @@ input {
     font-family: inherit;
 }
 
-
 html {
     font-size: 62.5%;
 }
 
 hr {
-    flex-basis: 100%; 
-    height: 0; 
-    margin: 0; 
+    flex-basis: 100%;
+    height: 0;
+    margin: 0;
     border: none;
     display: block;
 }
 
 /*STRUCTURE*/
+
 #main-container {
     height: 100vh;
-    height: min(calc(var(--vh, 1vh) * 100), calc(var(--vw, 1vw) * 100));
     width: 100%;
+    margin: auto;
     display: grid;
     grid-template-columns: 1fr;
     grid-template-rows: 1fr 1fr;
@@ -62,15 +65,14 @@ hr {
     flex-wrap: wrap;
     justify-content: space-evenly;
     align-content: center;
-    background-color: #9752cc;
+    margin: auto;
 }
 
 /*GRID*/
 #grid-container {
-    height: 90vh;
-    width: 90vw;
-    height: min(calc(var(--vh, 1vh) * 90), calc(var(--vw, 1vw) * 90));
-    width: min(calc(var(--vh, 1vh) * 90), calc(var(--vw, 1vw) * 90));
+    height: min(90vh, 90vw);
+    width: min(90vh, 90vw);
+
     padding: 0;
     margin: 20px;
     display: flex;
@@ -107,41 +109,41 @@ hr {
 .tool p,
 .tool button {
     margin: 0 auto;
-    font-family: 'Courier New', Courier, monospace;
+    font-family: "Courier New", Courier, monospace;
     font-size: 2rem;
     text-transform: uppercase;
     outline: none;
 }
 
-.tool input[type='button'] {
-	box-shadow:inset 0px 1px 0px 0px #efdcfb;
-	background:linear-gradient(to bottom, #dfbdfa 5%, #bc80ea 100%);
-	background-color:#dfbdfa;
-	border-radius:6px;
-	border:1px solid #c584f3;
-	display:inline-block;
-	cursor:pointer;
-	color:#ffffff;
-	font-family:Arial;
-	font-size:15px;
-	font-weight:bold;
-	padding:6px 24px;
-	text-decoration:none;
-	text-shadow:0px 1px 0px #9752cc;
+.tool input[type="button"] {
+    box-shadow: inset 0px 1px 0px 0px #efdcfb;
+    background: linear-gradient(to bottom, #dfbdfa 5%, #bc80ea 100%);
+    background-color: #dfbdfa;
+    border-radius: 6px;
+    border: 1px solid #c584f3;
+    display: inline-block;
+    cursor: pointer;
+    color: #ffffff;
+    font-family: Arial;
+    font-size: 15px;
+    font-weight: bold;
+    padding: 6px 24px;
+    text-decoration: none;
+    text-shadow: 0px 1px 0px #9752cc;
 }
-.tool input[type='button']:hover {
-	background:linear-gradient(to bottom, #bc80ea 5%, #dfbdfa 100%);
-	background-color:#bc80ea;
+.tool input[type="button"]:hover {
+    background: linear-gradient(to bottom, #bc80ea 5%, #dfbdfa 100%);
+    background-color: #bc80ea;
 }
-.tool input[type='button']:active {
-	position:relative;
-	top:1px;
+.tool input[type="button"]:active {
+    position: relative;
+    top: 1px;
 }
 
 .button-focus {
     transform: scale(1.1);
-    background:linear-gradient(to bottom, #bc80ea 5%, #dfbdfa 100%);
-	background-color:#bc80ea;
+    background: linear-gradient(to bottom, #bc80ea 5%, #dfbdfa 100%);
+    background-color: #bc80ea;
 }
 
 #color-container p {
@@ -161,7 +163,6 @@ hr {
     margin-bottom: 5px;
 }
 
-
 /*MEDIA QUERIES*/
 @media only screen and (min-width: 867px) {
     #main-container {
@@ -174,7 +175,7 @@ hr {
         border-right: 1px solid black;
         border-bottom: none;
     }
-    
+
     #forms {
         grid-area: 1 / 2 / 2 / 3;
         justify-content: center;
