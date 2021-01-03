@@ -1,9 +1,10 @@
 jscolor.presets.default = {
-    format:'rgba'
+    format:'rgba',
+    closeButton:true
 };
 
 let dynamicValues = {
-    gridScale: 28,
+    gridScale: 24,
     drawing: false,
     color: '#000000',
     opacity: 1,
@@ -88,39 +89,98 @@ function opacityCalc(rgb, hex) {
     return newHex;
 }
 
+function blockScroll() {
+    document.body.addEventListener("touchstart", function (e) {
+    if (e.target.id === 'grid-container' || e.target.className === 'cell') {
+        e.preventDefault();
+    }
+    }, false);
+    document.body.addEventListener("touchend", function (e) {
+    if (e.target.id === 'grid-container' || e.target.className === 'cell') {
+        e.preventDefault();
+    }
+    }, false);
+    document.body.addEventListener("touchmove", function (e) {
+    if (e.target.id === 'grid-container' || e.target.className === 'cell') {
+        e.preventDefault();
+    }
+    }, false);
+} 
+
+
+function drawAction(target) {
+    const colorPicker = document.getElementById('color');
+
+    if (dynamicValues.getDrawing()) {
+        let currentColor = target.style.getPropertyValue('background-color');
+        if (dynamicValues.getEraser()) {
+            currentColor = '#ffffff';
+        } else {
+            currentColor = opacityCalc(currentColor, dynamicValues.getColor());
+        }
+    
+        setTimeout(() => {
+            target.style.backgroundColor = currentColor;
+        }, 100);
+
+    } else if(dynamicValues.getPicker()) {
+        const currentColor = target.style.getPropertyValue('background-color');
+        colorPicker.jscolor.fromString(currentColor);
+        colorPicker.jscolor.channel('A', 1.0);
+    }
+}
+
 function drawEvents() {
     const container = document.getElementById('grid-container');
     const colorPicker = document.getElementById('color');
     const pickerButton = document.getElementById('picker');
 
-    container.addEventListener('mousedown', function(e){
+    container.addEventListener('pointerdown', function(e) {
         if (!dynamicValues.getPicker()) {
             dynamicValues.setDrawing(true);
         }
+        colorPicker.jscolor.hide();
+    });
+
+    container.addEventListener('pointerup', function(e){
+        if (e.pointerType === 'touch' || e.pointerType === 'pen') {
+            if (dynamicValues.getPicker()){
+                dynamicValues.setColor(colorPicker.jscolor.toHEXString());
+                dynamicValues.setOpacity(1);
+                dynamicValues.setPicker(false);
+            }
+            pickerButton.classList.remove('button-focus');
+        }
+        dynamicValues.setDrawing(false);
+    });
+
+    container.addEventListener('pointermove', function(e) {
+        let target = '';
+
+        if (e.pointerType === 'touch' || e.pointerType === 'pen') {
+            let x = e.clientX;
+            let y = e.clientY;
+            target = document.elementFromPoint(x, y);
+        } else {
+            return;
+        }
+
+        drawAction(target);
     });
     
+    container.addEventListener('pointerover', function(e) {
+        let target = '';
 
-    container.addEventListener('mouseover', function(e){
-        if (dynamicValues.getDrawing()) {
-            let currentColor = e.target.style.getPropertyValue('background-color');
-            if (dynamicValues.getEraser()) {
-                currentColor = '#ffffff';
-            } else {
-                currentColor = opacityCalc(currentColor, dynamicValues.getColor());
-            }
-            setTimeout(function(){
-                e.target.style.backgroundColor = currentColor;
-            }, 80);
-        } else if(dynamicValues.getPicker()) {
-            const currentColor = e.target.style.getPropertyValue('background-color');
-            colorPicker.jscolor.fromString(currentColor);
+        if (e.pointerType === 'mouse') {
+            target = e.target
+        } else {
+            return;
         }
+
+        drawAction(target);
     });
 
-    container.addEventListener('mouseup', function(){
-            dynamicValues.setDrawing(false);
-    });
-
+    
     container.addEventListener('click', 
     function(e) {
         if (dynamicValues.getPicker()){
@@ -195,12 +255,28 @@ function clearButton() {
     });
 }
 
+function customProperties() {
+    const grid = document.getElementById('grid-container');
+    const main = document.getElementById('main-container');
+
+    window.addEventListener('resize', 
+    function() {
+        let vh = window.innerHeight * 0.01;
+        let vw = window.innerWidth * 0.01;
+        grid.style.setProperty('--vh', `${vh}px`);
+        grid.style.setProperty('--vw', `${vw}px`);
+        main.style.setProperty('--vh', `${vh}px`);
+    });
+}
+
 document.addEventListener('DOMContentLoaded', 
 function(){
     makeGrid(dynamicValues.getGrid());
+    blockScroll();
     drawEvents(); 
     gridScale();
     pickerButton();
     eraserButton();
     clearButton();
+    customProperties();
 }, false);
