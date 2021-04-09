@@ -1,6 +1,8 @@
 jscolor.presets.default = {
     format: "rgba",
-    closeButton: true,
+    hideOnPaletteClick:true,
+    backgroundColor:'#F6EEFAFF',
+    borderColor:'#BC80EA',
 };
 
 let dynamicValues = {
@@ -10,6 +12,7 @@ let dynamicValues = {
     opacity: 1,
     picker: false,
     eraser: false,
+    clear: false,
 };
 
 function makeGrid(grid) {
@@ -108,6 +111,33 @@ function drawAction(target) {
     }
 }
 
+function buttonFocus(target, action) {
+    if (action !== 'toggle' && action !== 'remove') {
+        console.log('unknown action')
+    }
+
+    let targetFocus = target.value + 'Focus';
+    if (!(targetFocus in dynamicValues)) {
+        dynamicValues[targetFocus] = true;
+    }
+
+    if (dynamicValues[targetFocus] && action === 'toggle') {
+        dynamicValues[targetFocus] = false;
+
+        target.style.transform = 'scale(1.1)';
+        target.style.boxShadow = 'inset 0px 1px 0px 0px #efdcfb, 5px 5px 5px 1px rgba(0, 0, 0, .2)';
+        target.style.background = 'linear-gradient(to bottom, #bc80ea 5%, #dfbdfa 100%)';
+        target.style.backgroundColor = '#bc80ea';
+    } else if ((!dynamicValues[targetFocus] && action === 'toggle') || action === 'remove') {
+        dynamicValues[targetFocus] = true;
+
+        target.style.transform = 'scale(1)';
+        target.style.boxShadow = 'inset 0px 1px 0px 0px #efdcfb';
+        target.style.background = 'linear-gradient(to bottom, #dfbdfa 5%, #bc80ea 100%)';
+        target.style.backgroundColor = '#dfbdfa';
+    }
+}
+
 function drawEvents() {
     const container = document.getElementById("grid-container");
     const colorPicker = document.getElementById("color");
@@ -127,7 +157,7 @@ function drawEvents() {
                 dynamicValues.opacity = 1;
                 dynamicValues.picker = false;
             }
-            pickerButton.classList.remove("button-focus");
+            buttonFocus(pickerButton, 'remove');
         }
         dynamicValues.drawing = false;
     });
@@ -157,11 +187,11 @@ function drawEvents() {
             dynamicValues.picker = false;
         }
 
-        pickerButton.classList.remove("button-focus");
+        buttonFocus(pickerButton, 'remove');
     });
 }
 
-function colorPicker(color) {
+function colorPicker(color) { // HTML call
     dynamicValues.color = color.toHEXString();
     dynamicValues.opacity = color.channel("A").toFixed(2);
 }
@@ -182,8 +212,18 @@ function pickerButton() {
     picker.addEventListener("click", function (e) {
         dynamicValues.picker = !dynamicValues.picker;
         dynamicValues.eraser = false;
-        e.target.classList.toggle("button-focus");
-        eraser.classList.remove("button-focus");
+        buttonFocus(e.target, 'toggle');
+        buttonFocus(eraser, 'remove');
+    });
+
+    picker.addEventListener("mouseover", function (e) {
+       e.target.style.background = 'linear-gradient(to bottom, #bc80ea 5%, #dfbdfa 100%)';
+       e.target.style.backgroundColor = '#bc80ea';
+    });
+
+    picker.addEventListener("mouseout", function (e) {
+        e.target.style.background = 'linear-gradient(to bottom, #dfbdfa 5%, #bc80ea 100%)';
+        e.target.style.backgroundColor = '#dfbdfa';
     });
 }
 
@@ -193,8 +233,18 @@ function eraserButton() {
     eraser.addEventListener("click", function (e) {
         dynamicValues.eraser = !dynamicValues.eraser;
         dynamicValues.picker = false;
-        e.target.classList.toggle("button-focus");
-        picker.classList.remove("button-focus");
+        buttonFocus(e.target, 'toggle');
+        buttonFocus(picker, 'remove');
+    });
+
+    eraser.addEventListener("mouseover", function (e) {
+        e.target.style.background = 'linear-gradient(to bottom, #bc80ea 5%, #dfbdfa 100%)';
+        e.target.style.backgroundColor = '#bc80ea';
+    });
+
+    eraser.addEventListener("mouseout", function (e) {
+        e.target.style.background = 'linear-gradient(to bottom, #dfbdfa 5%, #bc80ea 100%)';
+        e.target.style.backgroundColor = '#dfbdfa';
     });
 }
 
@@ -205,17 +255,27 @@ function clearButton() {
     const container = document.getElementById("grid-container");
 
     clear.addEventListener("click", function (e) {
-        e.target.classList.toggle("button-focus");
-        eraser.classList.remove("button-focus");
-        picker.classList.remove("button-focus");
+        buttonFocus(e.target, 'toggle');
+        buttonFocus(eraser, 'remove');
+        buttonFocus(picker, 'remove');
         dynamicValues.eraser = false;
         dynamicValues.picker = false;
 
         setTimeout(function () {
             container.textContent = "";
             makeGrid(dynamicValues.gridScale);
-            e.target.classList.toggle("button-focus");
+            buttonFocus(e.target, 'toggle');
         }, 500);
+    });
+
+    clear.addEventListener("mouseover", function (e) {
+        e.target.style.background = 'linear-gradient(to bottom, #bc80ea 5%, #dfbdfa 100%)';
+        e.target.style.backgroundColor = '#bc80ea';
+    });
+
+    clear.addEventListener("mouseout", function (e) {
+        e.target.style.background = 'linear-gradient(to bottom, #dfbdfa 5%, #bc80ea 100%)';
+        e.target.style.backgroundColor = '#dfbdfa';
     });
 }
 
